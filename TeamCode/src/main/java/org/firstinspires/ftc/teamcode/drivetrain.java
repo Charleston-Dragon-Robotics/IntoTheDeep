@@ -171,4 +171,26 @@ public class drivetrain {
         int pulses = (int) (rotations * PULSE_PER_REVOLUTION * 1);
         return pulses;
     }
+
+    public void turn (double angle, double speed, boolean isLeft) {
+        imu.resetYaw();
+        boolean isDone =false;
+        while (!isDone) {
+            YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+            opmode.telemetry.addData("yaw", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
+            opmode.telemetry.update();
+            if (Math.abs(orientation.getYaw(AngleUnit.DEGREES)) < Math.abs(angle)) {
+                if (isLeft) {
+                    turnLeft(speed);
+                }
+                if (!isLeft) {
+                    turnRight(speed);
+                }
+            } else {
+                stop();
+                imu.resetYaw();
+                isDone = true;
+            }
+        }
+    }
 }
