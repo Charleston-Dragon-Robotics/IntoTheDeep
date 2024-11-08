@@ -176,7 +176,7 @@ public class drivetrain {
         FrontRM.setTargetPosition(pulses);
         BackLM.setTargetPosition(pulses);
         BackRM.setTargetPosition(pulses);
-        runEncoders();
+//        runEncoders();
 
         FrontLM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
