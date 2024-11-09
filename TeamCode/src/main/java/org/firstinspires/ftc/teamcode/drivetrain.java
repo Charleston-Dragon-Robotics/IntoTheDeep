@@ -113,7 +113,7 @@ public class drivetrain {
         BackRM.setPower(0);
     }
 
-    public void forwardDistance(double speed, int distance) {
+    public void forwardDistance(double speed, double distance) {
         imu.resetYaw();
         resetEncoders();
         int pulses = calculatePulses(distance);
@@ -138,14 +138,14 @@ public class drivetrain {
         BackRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    private int calculatePulses(int distance) {
+    private int calculatePulses(double distance) {
         double circumference = Math.PI * WheelDiameter;
         double rotations = distance / circumference;
         int pulses = (int) (rotations * PULSE_PER_REVOLUTION);
         return pulses;
     }
 
-    public void strafeLDistance(double speed, int distance) {
+    public void strafeLDistance(double speed, double distance) {
         resetEncoders();
         int pulses = calculateStrafePulses(distance);
         FrontLM.setTargetPosition(pulses);
@@ -161,7 +161,7 @@ public class drivetrain {
     }
 
 
-    public void strafeRDistance(double speed, int distance) {
+    public void strafeRDistance(double speed, double distance) {
         int pulses = calculateStrafePulses(distance);
     }
 
@@ -170,5 +170,27 @@ public class drivetrain {
         double rotations = distance / circumference;
         int pulses = (int) (rotations * PULSE_PER_REVOLUTION * 1);
         return pulses;
+    }
+
+    public void turn (double angle, double speed, boolean isLeft) {
+        imu.resetYaw();
+        boolean isDone =false;
+        while (!isDone) {
+            YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+            opmode.telemetry.addData("yaw", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
+            opmode.telemetry.update();
+            if (Math.abs(orientation.getYaw(AngleUnit.DEGREES)) < Math.abs(angle)) {
+                if (isLeft) {
+                    turnLeft(speed);
+                }
+                if (!isLeft) {
+                    turnRight(speed);
+                }
+            } else {
+                stop();
+                imu.resetYaw();
+                isDone = true;
+            }
+        }
     }
 }
