@@ -37,7 +37,7 @@ public class teleop extends LinearOpMode {
         // Tell us distance from object
         telemetry.addData("Distance", DistanceFrom);
         telemetry.update();
-         TouchSensor touch = null;
+        TouchSensor touch = null;
 
 
         Limelight3A limelight;
@@ -101,6 +101,8 @@ public class teleop extends LinearOpMode {
             if (newGamePad1.b.pressed) {
                 Drive.strafeLDistance(0.5, 24);
             }
+            telemetry.addData("B pressed", newGamePad1.b.pressed);
+            telemetry.update();
 
             LLResult result = limelight.getLatestResult();
             if (result != null) {
@@ -135,7 +137,7 @@ public class teleop extends LinearOpMode {
                 }
             }
             //
-            if (gamepad2.left_stick_y < -0.4&&!touch.isPressed()) {
+            if (gamepad2.left_stick_y < -0.4 && !touch.isPressed()) {
                 Intake.intake();
             } else if (gamepad2.left_stick_y > 0.4) {
                 Intake.eject();
