@@ -113,7 +113,7 @@ public class drivetrain {
         BackRM.setPower(0);
     }
 
-    public void forwardDistance(double speed, double distance) {
+    public void forwardDistance(double speed, int distance) {
         imu.resetYaw();
         resetEncoders();
         int pulses = calculatePulses(distance);
@@ -138,14 +138,14 @@ public class drivetrain {
         BackRM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    private int calculatePulses(double distance) {
+    private int calculatePulses(int distance) {
         double circumference = Math.PI * WheelDiameter;
         double rotations = distance / circumference;
         int pulses = (int) (rotations * PULSE_PER_REVOLUTION);
         return pulses;
     }
 
-    public void strafeLDistance(double speed, double distance) {
+    public void strafeLDistance(double speed, int distance) {
         resetEncoders();
         int pulses = calculateStrafePulses(distance);
         FrontLM.setTargetPosition(pulses);
@@ -161,8 +161,18 @@ public class drivetrain {
     }
 
 
-    public void strafeRDistance(double speed, double distance) {
+    public void strafeRDistance(double speed, int distance) {
+        resetEncoders();
         int pulses = calculateStrafePulses(distance);
+        FrontLM.setTargetPosition(pulses);
+        FrontRM.setTargetPosition(pulses);
+        BackRM.setTargetPosition(pulses);
+        BackRM.setTargetPosition(pulses);
+
+        while (FrontLM.isBusy() && FrontRM.isBusy() && BackRM.isBusy() && BackLM.isBusy()) {
+            strafeLeft(speed);
+        }
+        stop();
     }
 
     public int calculateStrafePulses(double distance) {

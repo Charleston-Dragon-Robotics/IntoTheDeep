@@ -10,10 +10,19 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 public class Intake {
-    private CRServo Intake = null;
-    private Servo grabber1 = null;
-    private Servo grabber2 = null;
+
+    // Intake servo and motor set up
+    private DcMotor IExtension = null;
+    private Servo IClaw = null;
+    private Servo IRotation = null;
+    private Servo IWrist = null;
+
+    //Outtake servo set up
+    private Servo OClaw = null;
+    private Servo OWrist = null;
+
     private LinearOpMode opmode = null;
+
 
     public Intake() {
     }
@@ -23,22 +32,32 @@ public class Intake {
         opmode = opMode;
         hwMap = opMode.hardwareMap;
 
-        Intake = hwMap.crservo.get("Intakes");
-        grabber1 = hwMap.servo.get("grabber1");
-        grabber2 = hwMap.servo.get("grabber2");
-        Intake.setPower(0);
-
+        IExtension = hwMap.dcMotor.get("IExtension");
+        IClaw = hwMap.servo.get("IClaw");
+        IWrist = hwMap.servo.get("IWrist");
     }
 
-    public void intake() {
-        Intake.setPower(1);
+    public void intakeExtention (){
+        IExtension.setPower(-.85);
+    }
+    public void intakeStop (){
+        IExtension.setPower(0);
+}
+    public void intakeRetract (){
+        IExtension.setPower(.85);
+    }
+    public void intakeGrasp() {
+        IClaw.setPosition(0.5);
     }
 
-    public void eject() {
-        Intake.setPower(-1);
+    public void intakeRelease() {
+        IClaw.setPosition(-0.5);
     }
 
-    public void transport() {
-        Intake.setPower(0);
+    public void intakeWristDown (){
+        IWrist.setPosition(0.5);
+    }
+    public void intakeWristUp (){
+        IWrist.setPosition(-0.5);
     }
 }
