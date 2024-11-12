@@ -37,39 +37,40 @@ public class teleop extends LinearOpMode {
         // Tell us distance from object
         telemetry.addData("Distance", DistanceFrom);
         telemetry.update();
-         TouchSensor touch = null;
+        TouchSensor touch = null;
 
 
-        Limelight3A limelight;
+//        Limelight3A limelight;
 
 
         drivetrain Drive = new drivetrain();
         Intake Intake = new Intake();
-        Limelight Lime = new Limelight();
+//        Limelight Lime = new Limelight();
 
         GamepadStates newGamePad1 = new GamepadStates(gamepad1);
         GamepadStates newGamePad2 = new GamepadStates(gamepad2);
 
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+//        limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
         telemetry.setMsTransmissionInterval(11);
 
         touch = hardwareMap.touchSensor.get("touch");
 
 
-        limelight.pipelineSwitch(0);
+//        limelight.pipelineSwitch(0);
 
-        limelight.start();
+//        limelight.start();
 
         Drive.init(this);
         Intake.init(this);
-        Lime.init();
+//        Lime.init();
 
         waitForStart();
 
         while (opModeIsActive()) {
             newGamePad1.updateState();
             newGamePad2.updateState();
+
 
             if (gamepad1.left_stick_x > .4) {
                 Drive.strafeRight(speed);
@@ -102,51 +103,64 @@ public class teleop extends LinearOpMode {
                 Drive.strafeLDistance(0.5, 24);
             }
 
-            LLResult result = limelight.getLatestResult();
-            if (result != null) {
-                if (result.isValid()) {
-                    if (newGamePad2.a.state) {
-                        if (result.getTx() > 10) {
-                            while (result.getTx() > 10) {
-                                Drive.forward(.25);
-                            }
-                            Drive.stop();
-                        }
-                        if (result.getTy() > 10) {
-                            while (result.getTy() > 10) {
-                                Drive.strafeRight(.25);
-                            }
-                            Drive.stop();
-                        } else if (result.getTy() < -10) {
-                            while (result.getTy() < -10) {
-                                Drive.strafeLeft(.25);
-                            }
-                            Drive.stop();
-                        }
-                    } else {
-                        Drive.stop();
-                    }
-                    Pose3D botpose = result.getBotpose();
-                    telemetry.addData("tx", result.getTx());
-                    telemetry.addData("ty", result.getTy());
-                    telemetry.addData("Botpose", botpose.toString());
-                    telemetry.update();
+//            LLResult result = limelight.getLatestResult();
+//            if (result != null) {
+//                if (result.isValid()) {
+//                    if (newGamePad2.a.state) {
+//                        if (result.getTx() > 10) {
+//                            while (result.getTx() > 10) {
+//                                Drive.forward(.25);
+//                            }
+//                            Drive.stop();
+//                        }
+//                        if (result.getTy() > 10) {
+//                            while (result.getTy() > 10) {
+//                                Drive.strafeRight(.25);
+//                            }
+//                            Drive.stop();
+//                        } else if (result.getTy() < -10) {
+//                            while (result.getTy() < -10) {
+//                                Drive.strafeLeft(.25);
+//                            }
+//                            Drive.stop();
+//                        }
+//                    } else {
+//                        Drive.stop();
+//                    }
+//                    Pose3D botpose = result.getBotpose();
+//                    telemetry.addData("tx", result.getTx());
+//                    telemetry.addData("ty", result.getTy());
+//                    telemetry.addData("Botpose", botpose.toString());
+//                    telemetry.update();
+//
+//                }
+//            }
 
-                }
-            }
-            //
-            if (gamepad2.left_stick_y < -0.4&&!touch.isPressed()) {
-                Intake.intake();
-            } else if (gamepad2.left_stick_y > 0.4) {
-                Intake.eject();
-            } else {
-                Intake.transport();
-            }
 
             if (newGamePad1.a.released) {
-                Drive.forwardDistance(.25, 24);
+                //Drive.forwardDistance(.25, 24);
+                Intake.intakeGrasp();
+//            } else if (newGamePad1.b.released) {
+//                //Drive.forwardDistance(.25, 24);
+////                Intake.intakeRelease();}
             }
+                if (newGamePad1.b.released) {
 
+                    Intake.intakeWristUp();
+                }
+
+                if (newGamePad1.x.released) {
+                    Intake.intakeWristDown();
+                }
+
+                if (gamepad1.dpad_up) {
+                    Intake.intakeExtention();
+                } else if (gamepad1.dpad_down) {
+                    Intake.intakeRetract();
+                } else {
+                    Intake.intakeStop();
+                }
+
+            }
         }
     }
-}

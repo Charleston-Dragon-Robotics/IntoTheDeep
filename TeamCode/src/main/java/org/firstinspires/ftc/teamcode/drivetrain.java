@@ -18,8 +18,8 @@ public class drivetrain {
     private DcMotor FrontRM = null;
     private DcMotor BackLM = null;
     private DcMotor BackRM = null;
-    public CRServo testing = null;
-    public CRServo testing1 = null;
+//    public CRServo testing = null;
+//    public CRServo testing1 = null;
     private final double WheelDiameter = 3.75;
     private final double PULSE_PER_REVOLUTION = 537.7;
     private final double STRAFE_CORRECT = 1;
@@ -49,8 +49,8 @@ public class drivetrain {
         BackRM = hwMap.dcMotor.get("BackRM");
         BackLM = hwMap.dcMotor.get("BackLM");
 
-        testing = hwMap.crservo.get("testing");
-        testing1 = hwMap.crservo.get("testing1");
+//        testing = hwMap.crservo.get("testing");
+//        testing1 = hwMap.crservo.get("testing1");
 
         FrontLM.setDirection(REVERSE);
         FrontRM.setDirection(FORWARD);
@@ -153,7 +153,6 @@ public class drivetrain {
         BackRM.setTargetPosition(pulses);
         BackRM.setTargetPosition(pulses);
 
-
         while (FrontLM.isBusy() && FrontRM.isBusy() && BackRM.isBusy() && BackLM.isBusy()) {
             strafeLeft(speed);
         }
@@ -162,7 +161,17 @@ public class drivetrain {
 
 
     public void strafeRDistance(double speed, int distance) {
+        resetEncoders();
         int pulses = calculateStrafePulses(distance);
+        FrontLM.setTargetPosition(pulses);
+        FrontRM.setTargetPosition(pulses);
+        BackRM.setTargetPosition(pulses);
+        BackRM.setTargetPosition(pulses);
+
+        while (FrontLM.isBusy() && FrontRM.isBusy() && BackRM.isBusy() && BackLM.isBusy()) {
+            strafeLeft(speed);
+        }
+        stop();
     }
 
     public int calculateStrafePulses(double distance) {
